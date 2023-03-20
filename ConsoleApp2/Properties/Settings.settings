@@ -1,0 +1,12 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ConsoleApp2.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="ConsoleApp2_cl_sii_palena_CrSeedService" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://palena.sii.cl/DTEWS/CrSeed.jws</Value>
+    </Setting>
+    <Setting Name="ConsoleApp2_cl_sii_palenatoken_GetTokenFromSeedService" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://palena.sii.cl/DTEWS/GetTokenFromSeed.jws</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>
