@@ -1,15 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Cryptography;
 using System.Security.Cryptography.Xml;
-using System.Threading.Tasks;
 using System.Xml;
 using System.Net;
-using ConsoleApp2.ServiceReference;
-
-
 
 namespace ConsoleApp2
 {
@@ -17,27 +11,39 @@ namespace ConsoleApp2
     {
         static void Main(string[] args)
         {
+            // Habilita el ambiente de desarrollo para consultar servicios Https
             ServicePointManager.SecurityProtocol = (SecurityProtocolType)(0xc0 | 0x300 | 0xc00);
 
+            // Instancio la referencia web del servicio de impuestos internos para obtener la semilla
             cl.sii.palena.CrSeedService SiiServiceCeed = new cl.sii.palena.CrSeedService();
             string Sem = SiiServiceCeed.getSeed();
             
-            
+            // Obtiene el certificado digital, necesario para firmar el xml. Este certificado debe tenerlo
+            // todo contribuyente que emita documentos tributarios.
+            // Junto con obtener el certificado(En el constructor de la clase), se esta instacionado un objeto de la clase Firma
             Firma firma = new Firma(@"C:\git\15485048-1.p12", "password certificado");
 
-            // xml no firmado
-            string semilla = "<getToken><item><Semilla>095891399784</Semilla></item></getToken>";
+            // Se arma la primera parte del Xml segun la "especificacion(xd)" del servicio de impuestos internos.
+            // Dicha especificacion se encuentra en este link:
+            // https://www.sii.cl/factura_electronica/factura_mercado/autenticacion.pdf
+            string semilla = "<getToken><item><Semilla>"+ Sem + "</Semilla></item></getToken>";
+            
+            // Se nombra variable como XMl no firmado
             string unsignedXml = semilla;
 
-            // xml firmado
+            // Se asigna la variable con el resultado del metodo Firmar del objeto firma
             string signedXml = firma.Firmar(unsignedXml, referenceUri: "", addTransform: true);
 
-            string hola = signedXml;
-
+            
+            // Una vez que el XML ya esta firmado, se instacia la referencia web del servicio obtener token tambien
+            // perteneciente al servicio de impuestos internos.
             cl.sii.palenatoken.GetTokenFromSeedService SiiServiceToken = new cl.sii.palenatoken.GetTokenFromSeedService();
+            
+            //Se asigna el resultado de la llamada al servicio de obtencion de token, a la variable string. 
+            //Esta variable contiene el token necesario, para autenticarse y consumir los demas servicios del SII.
             string response = SiiServiceToken.getToken(signedXml);
 
-
+            //Se muestra por pantalla el resultado.
             Console.WriteLine(response);
         }
     }
